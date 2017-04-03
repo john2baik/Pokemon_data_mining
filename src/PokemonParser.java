@@ -104,8 +104,9 @@ public class PokemonParser {
     public void addToStringAttributes(int i, int j, String attribute){
         int count ;
 
-        if(attribute == null || attribute.isEmpty()){
-            stringAttributes.get(i)[j] = "DNE";
+        if(attribute == null || attribute.length() == 0){
+        //    stringAttributes.get(i)[j] = "DNE";
+            attribute = "DNE";
         }
         else{
             stringAttributes.get(i)[j] = attribute;
