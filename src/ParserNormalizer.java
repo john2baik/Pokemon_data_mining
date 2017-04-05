@@ -101,6 +101,7 @@ public class ParserNormalizer {
     }
 
 
+
     public void addToStringAttributes(int i, int j, String attribute){
         int count ;
 
@@ -164,7 +165,7 @@ public class ParserNormalizer {
     }
 
     public static double formatDecimal(double val) {
-        DecimalFormat numberFormat = new DecimalFormat("#.00");
+        DecimalFormat numberFormat = new DecimalFormat("#.0000");
         return Double.valueOf(numberFormat.format(val));
     }
 
@@ -187,6 +188,10 @@ public class ParserNormalizer {
         }
     }
 
+    public String getAttributeDescriptions(){
+        return attributeDescriptions;
+    }
+
     public List<double[]> getDoubleAttributes(){
         //return doubleAttributes();
         return numericNormAttributes;
@@ -199,5 +204,11 @@ public class ParserNormalizer {
     }
     public List<String[]> getData(){
         return data;
+    }
+    public double[] getMaxiNumOfAttribs(){
+        return maxiNumOfAttribs;
+    }
+    public double[] getMiniNumOfAttribs(){
+        return miniNumOfAttribs;
     }
 }

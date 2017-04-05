@@ -14,6 +14,7 @@ public class ParserNormalizerTest {
 
         //ParserNormalizer pokemon = new ParserNormalizer("/Users/johnbaik/IdeaProjects/Pokemon_data_mining/src/pokemon.csv");
         ParserNormalizer pokemon = new ParserNormalizer(dataFileName);
+        System.out.println(pokemon.getAttributeDescriptions());
         System.out.println("This is the normalized list of numerical attributes:");
         for (double[] tuple : pokemon.getDoubleAttributes()) {
             System.out.println(Arrays.toString(tuple));
