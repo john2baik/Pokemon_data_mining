@@ -9,8 +9,6 @@ public class NumericalCluster {
     private List <double[]> data;
     private List<List<double[]>> clusters;
     private String attributeDescriptions;
-    private double[] max;
-    private double[] min;
     private List<double[]> oldCenter;
     private List<double[]> newCenter;
     private int dataSize;
@@ -69,7 +67,7 @@ public class NumericalCluster {
             extractCouple();
             //printData();
             initialSetup();
-            printCenters(oldCenter);
+           // printCenters(oldCenter);
             cluster();
         }
 
@@ -96,11 +94,9 @@ public class NumericalCluster {
 
     private void checkForChange(){
         hasChanged = true;//only change when ALL centers have not changed by a 5% margin
-        for(int i = 0; i < k; i++){
+        for(int i = 0; i < data.get(0).length; i++){
             double[] oldCenterTuple = oldCenter.get(i);
             double[] newCenterTuple = newCenter.get(i);
-//            System.out.println("This is the oldCenterTuple" + Arrays.toString(oldCenterTuple));
-//            System.out.println("this is the newCenterTuple" + Arrays.toString(newCenterTuple));
             double difference = Math.abs((oldCenterTuple[i] - newCenterTuple[i]));
             double percentChange = (difference / oldCenterTuple[i]) * 100.0;
             //consider all centers together. none or all rule.

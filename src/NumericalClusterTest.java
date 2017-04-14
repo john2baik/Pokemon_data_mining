@@ -36,7 +36,7 @@ public class NumericalClusterTest {
         y = sc.nextInt();
 
         NumericalCluster dosAttributes = new NumericalCluster(pokemon.getDoubleAttributes(), pokemon.getAttributeDescriptions(), pokemon.getMaxiNumOfAttribs(), pokemon.getMiniNumOfAttribs(), 5, x, y);
-
+        dosAttributes.printClusters();
        // dosAttributes.printClusters();
     }
 }
