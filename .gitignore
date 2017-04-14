@@ -1,8 +1,5 @@
 ./idea
 ./out
-.idea
-<<<<<<< HEAD
-.out
-=======
-.out
->>>>>>> origin/master
+.idea/*
+.out/*
+
