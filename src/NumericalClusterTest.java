@@ -8,8 +8,7 @@ import java.util.Scanner;
 public class NumericalClusterTest {
     public static void main(String[] args){
         ParserNormalizer pokemon = new ParserNormalizer("/Users/johnbaik/IdeaProjects/Pokemon_data_mining/src/pokemon.csv");
-        String attributeDescriptions = pokemon.getAttributeDescriptions();
-        NumericalCluster numCluster = new NumericalCluster(pokemon.getDoubleAttributes(), pokemon.getAttributeDescriptions(), pokemon.getMaxiNumOfAttribs(), pokemon.getMiniNumOfAttribs(), 5, -1, -1);
+      //  NumericalCluster numCluster = new NumericalCluster(pokemon.getDoubleAttributes(), pokemon.getAttributeDescriptions(), pokemon.getMaxiNumOfAttribs(), pokemon.getMiniNumOfAttribs(), 5, -1, -1);
         //numCluster.printData();
        // System.out.println(numCluster.getAttributeDescriptions());
       //  numCluster.printClusters();
@@ -20,7 +19,7 @@ public class NumericalClusterTest {
         Scanner sc = new Scanner(System.in);
         double[] goodExample = pokemon.getDoubleAttributes().get(0);
 
-        System.out.println("this is the example\n" + Arrays.toString(goodExample));
+       // System.out.println("this is the example\n" + Arrays.toString(goodExample));
         String attributeList = pokemon.getAttributeDescriptions();
         String[] attributes = attributeList.split(",");
         int count = 0;
@@ -38,5 +37,6 @@ public class NumericalClusterTest {
 
         NumericalCluster dosAttributes = new NumericalCluster(pokemon.getDoubleAttributes(), pokemon.getAttributeDescriptions(), pokemon.getMaxiNumOfAttribs(), pokemon.getMiniNumOfAttribs(), 5, x, y);
 
+       // dosAttributes.printClusters();
     }
 }

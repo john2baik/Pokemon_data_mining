@@ -13,45 +13,66 @@ public class NumericalCluster {
     private double[] min;
     private List<double[]> oldCenter;
     private List<double[]> newCenter;
-    private int tupleLength;
     private int dataSize;
     private int k;
     private boolean hasChanged;
     private int numOfAttributes;
     private final double threshold = 1.0;
+
+    //for only 2 attributes
     int attribute1;
     int attribute2;
+    List<double[]> couple;
 
 
+    /*
+    Set up constructor so that it will run the clustering based on
+     */
 
     public NumericalCluster(List<double[]> data, String attributeDescriptions, double[] max, double[] min, int k, int attribute1, int attribute2){
         this.data = data;
         this.attributeDescriptions = attributeDescriptions;
         this.max = max;
         this.min = min;
-        tupleLength = data.get(0).length;
         dataSize = data.size();
         this.k = k;
         hasChanged = true;
         numOfAttributes = data.get(0).length;
         this.attribute1 = attribute1;
         this.attribute2 = attribute2;
-        if(attribute1 < 0 || attribute2 < 0){
-            runAll();
-        }
-        else
-            run();
-
+        //printData();
+        run();
         // System.out.println(attributeDescriptions);
     }
 
-    private void run(){
 
+
+    private void extractCouple(){
+        couple = new ArrayList<>();
+        for(double[] tuple : data){
+           // System.out.println(tuple[attribute1] + tuple[attribute2]);
+            double[] arr = {tuple[attribute1], tuple[attribute2]};
+            couple.add(arr);
+        }
+
+        data = new ArrayList<> (couple);
+        dataSize = couple.size();
+        numOfAttributes = 2;
     }
 
-    private void runAll(){
-        initialSetup();
-        cluster();
+    private void run(){
+        if(attribute1 < 0 && attribute2 < 0){
+            initialSetup();
+            cluster();
+        }
+        else{
+            extractCouple();
+            //printData();
+            initialSetup();
+            printCenters(oldCenter);
+            cluster();
+        }
+
     }
 
     private void cluster(){
@@ -78,6 +99,8 @@ public class NumericalCluster {
         for(int i = 0; i < k; i++){
             double[] oldCenterTuple = oldCenter.get(i);
             double[] newCenterTuple = newCenter.get(i);
+//            System.out.println("This is the oldCenterTuple" + Arrays.toString(oldCenterTuple));
+//            System.out.println("this is the newCenterTuple" + Arrays.toString(newCenterTuple));
             double difference = Math.abs((oldCenterTuple[i] - newCenterTuple[i]));
             double percentChange = (difference / oldCenterTuple[i]) * 100.0;
             //consider all centers together. none or all rule.
@@ -90,6 +113,9 @@ public class NumericalCluster {
         }
     }
 
+    /*
+    Creates the new Centers
+     */
     private void updateClusterMean(){
         newCenter = new ArrayList<>();
         for(List<double[]> cluster : clusters){
@@ -108,6 +134,10 @@ public class NumericalCluster {
         }
 
     }
+
+    /*
+    For each tuple in the data, adds it to each individual cluster
+     */
     private void assignCluster() {
         for (double[] tuple : data) {
             double minDist = Double.MAX_VALUE;
@@ -193,6 +223,9 @@ public class NumericalCluster {
         return attributeDescriptions;
     }
 
-
-
+    private void printCenters(List<double[]> Center){
+        for(double[] x : Center){
+            System.out.println(Arrays.toString(x));
+        }
+    }
 }
