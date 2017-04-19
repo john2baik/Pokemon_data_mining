@@ -30,8 +30,6 @@ public class NumericalCluster {
     public NumericalCluster(List<double[]> data, String attributeDescriptions, double[] max, double[] min, int k, int attribute1, int attribute2){
         this.data = data;
         this.attributeDescriptions = attributeDescriptions;
-        this.max = max;
-        this.min = min;
         dataSize = data.size();
         this.k = k;
         hasChanged = true;
@@ -224,4 +222,13 @@ public class NumericalCluster {
             System.out.println(Arrays.toString(x));
         }
     }
+
+    public int getAttribute1(){
+        return attribute1;
+    }
+
+    public int getAttribute2(){
+        return attribute2;
+    }
+
 }

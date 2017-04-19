@@ -37,6 +37,8 @@ public class NumericalClusterTest {
 
         NumericalCluster dosAttributes = new NumericalCluster(pokemon.getDoubleAttributes(), pokemon.getAttributeDescriptions(), pokemon.getMaxiNumOfAttribs(), pokemon.getMiniNumOfAttribs(), 5, x, y);
         dosAttributes.printClusters();
+
+        CSVFileMaker file = new CSVFileMaker(dosAttributes.getClusters(),dosAttributes.getAttributeDescriptions(), x, y);
        // dosAttributes.printClusters();
     }
 }
