@@ -17,7 +17,8 @@ public class NumericalClusterTest {
         //now try to do with given 2 attributes
         int x=0, y=0;
         Scanner sc = new Scanner(System.in);
-        double[] goodExample = pokemon.getDoubleAttributes().get(0);
+        double[] goodExample = pokemon.getDoubleAttributes().get(304);
+        System.out.println(Arrays.toString(goodExample));
 
        // System.out.println("this is the example\n" + Arrays.toString(goodExample));
         String attributeList = pokemon.getAttributeDescriptions();

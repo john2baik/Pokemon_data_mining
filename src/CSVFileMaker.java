@@ -39,13 +39,16 @@ public class CSVFileMaker {
                     pw.write(x[0] + ", " + x[1] + "\n");
                 }
                 count++;
-                pw.write("\n Cluster number " + count + "\n");
+//                pw.write("\n Cluster number " + count + "\n");
+//                pw.write(firstAttr + ", " + secondAttr + "\n");
             }
             pw.close();
         }
         catch (IOException e){
             e.printStackTrace();
         }
+
+        System.out.println(filename + " has been created in the same directory.");
 
 
 
