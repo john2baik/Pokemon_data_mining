@@ -1,38 +1,45 @@
-
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Set;
 
-/**
- * Created by johnbaik on 3/31/17.
- */
-
-public class ParserNormalizer {
-
+public class ReverseParserNormalizer{
     private File 			csvFile;
+    private File            resultFile;
+    private File			reverseDataFile;
     private List <String[]> data;
+    private List <String[]> reverseData;
+    private List <String[]> rData;
     private String 			attributeDescriptions;
     private int 			tupleLength;
 
 
     private int 			dataSize;
+    private int				reverseDataSize;
     private List<double[]> 	doubleAttributes;
     private List<String[]> 	stringAttributes;
+    private List<double[]>  reverseDoubleAttributes;
     private List<HashMap>	alphbeticAttributes;
     private List<double[]>  numericNormAttributes;
     private double[]		maxiNumOfAttribs;
     private double[]		miniNumOfAttribs;
     private final double  	MAXIMUM_NUMBER  = 1000000.0;
     private final double  	MINIMUM_NUMBER  = 0.0;
-    private boolean			debug = true;
+    private boolean			debug = false;
     private BufferedWriter  output;
 
-    public ParserNormalizer(String filePathName){
-        this.csvFile = new File(filePathName);
+    public ReverseParserNormalizer(String dataSetFile, String resultFile, String reverseOutputFile) {
+        this.csvFile 			= new File(dataSetFile);
+        this.resultFile 		= new File(resultFile);
+        this.reverseDataFile	= new File(reverseOutputFile);
         makeLists();
     }
 
@@ -57,6 +64,24 @@ public class ParserNormalizer {
             e.printStackTrace();
         }
         dataSize = data.size();
+    }
+
+    private void readData(File inputFile) {
+        try{
+            Scanner sc = new Scanner(inputFile);
+            //attributeDescriptions = sc.nextLine(); //skip header line
+            while(sc.hasNextLine()){
+                String line = sc.nextLine();
+                String[] tuple = line.split(",");
+                tupleLength = tuple.length;
+                reverseData.add(tuple);
+            }
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        reverseDataSize = data.size();
+
     }
 
     private void seperateNumerical(){
@@ -100,9 +125,29 @@ public class ParserNormalizer {
             doubleAttributes.set(i, tmpDoubleArr);
         }
 
-        normalizeNumericData();
+        reverseNormalizeNumericData(resultFile);
     }
 
+    public void initializeStringList(){
+        String[] temp = new String[tupleLength];
+        for(int i = 0; i < dataSize; i++){
+            stringAttributes.add(temp);
+        }
+    }
+
+    public void initializeDoubleList(){
+        double[] temp = new double[tupleLength];
+        for(int i = 0; i < dataSize; i++){
+            doubleAttributes.add(temp);
+        }
+    }
+
+    public void initializeNumericNormList(){
+        double[] temp = new double[tupleLength];
+        for(int i = 0; i < dataSize; i++){
+            numericNormAttributes.add(temp);
+        }
+    }
 
     public void addToStringAttributes(int i, int j, String attribute){
         int count ;
@@ -127,51 +172,59 @@ public class ParserNormalizer {
             System.out.println(alphbeticAttributes.get(j).get(attribute));;
     }
 
-    public void initializeStringList(){
-        String[] temp = new String[tupleLength];
-        for(int i = 0; i < dataSize; i++){
-            stringAttributes.add(temp);
-        }
+    private void reverseNormalizeNumericData(File resultFile) {
+        reverseData = new ArrayList<>(dataSize);
+        readData(resultFile);
+
+        processReverseData();
     }
 
-    public void initializeDoubleList(){
-        double[] temp = new double[tupleLength];
-        for(int i = 0; i < dataSize; i++){
-            doubleAttributes.add(temp);
-        }
-    }
+    private void processReverseData() {
+        rData = new ArrayList<String[]>();
+        int size = miniNumOfAttribs.length;
 
-    public void initializeNumericNormList(){
-        double[] temp = new double[tupleLength];
-        for(int i = 0; i < dataSize; i++){
-            numericNormAttributes.add(temp);
-        }
-    }
-
-    public void normalizeNumericData() {
-        // normalize numeric data
-        for (int i = 0; i < dataSize; i++) {
-            double[] tmpDoubleArr = new double[tupleLength];
+        for(int i = 0; i < reverseDataSize; i++){
             int k = 0;
-            for (int j = 1; j < tupleLength; j++) {
-                if (debug)
-                    System.out.println(doubleAttributes.get(i)[j]);
-                if (miniNumOfAttribs[j] != MAXIMUM_NUMBER) { // && doubleAttributes.get(i)[j] != 0.0) {
-                    //tmpDoubleArr[j] = formatDecimal((doubleAttributes.get(i)[j] - miniNumOfAttribs[j]) / (maxiNumOfAttribs[j] - miniNumOfAttribs[j]));
-                    tmpDoubleArr[k++] = (doubleAttributes.get(i)[j] - miniNumOfAttribs[j]) / (maxiNumOfAttribs[j] - miniNumOfAttribs[j]);
+            String[] tmp = new String[size];
+            String[] tuple = reverseData.get(i);
 
-                    if (debug)
-                        System.out.println("i : " + i + " j : " + j + " val : " + doubleAttributes.get(i)[j] + " maxi : " + maxiNumOfAttribs[j] + " mini : "+ miniNumOfAttribs[j] + " nor : " + tmpDoubleArr[k-1]);
+            tmp[0] = String.valueOf(i+1);
+
+            for (int j = 1; j < size; j++) {
+                // it should be the alphabetic attribute
+                if (miniNumOfAttribs[j] == MAXIMUM_NUMBER)
+                    tmp[j] = "0";
+                else if (tuple[k].contains("[")) {
+                    // remove "]" at front
+                    tuple[k] = tuple[k].substring(1, tuple[k].length());
+                    tmp[j] = formatDecimalToString(Double.valueOf(tuple[k]).doubleValue(), maxiNumOfAttribs[j], miniNumOfAttribs[j]);
+                    k++;
+                }
+                else if (tuple[k].contains("]")) {
+                    // remove "]" at end
+                    tuple[k] = tuple[k].substring(0, tuple[k].length()-1);
+                    tmp[j] = formatDecimalToString(Double.valueOf(tuple[k]).doubleValue(), maxiNumOfAttribs[j], miniNumOfAttribs[j]);
+                    k++;
+                } else {
+                    //double dValue = Double.valueOf(tuple[j]) * (maxiNumOfAttribs[j] - miniNumOfAttribs[j]);
+                    tmp[j] = formatDecimalToString(Double.valueOf(tuple[k]).doubleValue(), maxiNumOfAttribs[j], miniNumOfAttribs[j]);
+                    k++;
                 }
             }
 
-            double[] doubleArr = new double[k];
-            for (int l = 0; l < k; l++)
-                doubleArr[l] = tmpDoubleArr[l];
-
-            numericNormAttributes.set(i, doubleArr);
+            rData.add(i, tmp);
         }
+    }
 
+    private String formatDecimalToString(double doubleValue, double maxi, double mini) {
+        if (maxi == 0.0)
+            return "0";
+
+        double dValue = Double.valueOf(doubleValue) * (maxi - mini);
+        dValue += mini;
+        dValue = formatDecimal(dValue);
+        String tmp = String.valueOf(dValue);
+        return tmp;
     }
 
     public static double formatDecimal(double val) {
@@ -179,9 +232,25 @@ public class ParserNormalizer {
         return Double.valueOf(numberFormat.format(val));
     }
 
-    public void printDoubleLists(List<double[]> list, String outputFile){
+    public void printReverseLists(List<String[]> list, String outputFile){
         try {
             output = new BufferedWriter(new FileWriter(outputFile));
+            int i = 0;
+
+            for(String[] x:list){
+                output.write(Arrays.toString(x) + "\r\n");
+                System.out.println(Arrays.toString(x));
+            }
+
+            output.close();
+        } catch (IOException ex) {
+            System.out.print(ex.getMessage());
+        }
+    }
+
+    public void printDoubleLists(List<double[]> list, String outputFile){
+        try {
+            BufferedWriter output = new BufferedWriter(new FileWriter(outputFile));
 
             for(double[] x:list){
                 output.write(Arrays.toString(x) + "\r\n");
@@ -207,17 +276,16 @@ public class ParserNormalizer {
         }
     }
 
-    public List<double[]> getDoubleAttributes(){
-        //return doubleAttributes();
-        return numericNormAttributes;
+    public List<String[]> getReverseDoubleAttributes(){
+        return rData;
     }
 
     //public List<String[]> getStringAttributes(){
     public List<HashMap> getStringAttributes(){
-        //return stringAttributes();
         return alphbeticAttributes;
     }
     public List<String[]> getData(){
         return data;
     }
+
 }

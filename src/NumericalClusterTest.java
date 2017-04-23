@@ -1,10 +1,13 @@
+/*
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+*/
 /**
  * Created by johnbaik on 4/5/17.
- */
+ *//*
+
 public class NumericalClusterTest {
     public static void main(String[] args){
         ParserNormalizer pokemon = new ParserNormalizer("/Users/johnbaik/IdeaProjects/Pokemon_data_mining/src/pokemon.csv");
@@ -40,3 +43,4 @@ public class NumericalClusterTest {
        // dosAttributes.printClusters();
     }
 }
+*/
