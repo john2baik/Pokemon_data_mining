@@ -220,4 +220,29 @@ public class ParserNormalizer {
     public List<String[]> getData(){
         return data;
     }
+
+    public static void main(String[] args) {
+        if (args.length != 2) {
+            System.out.println("Usage: NormalizerTest datasetName outputFile");
+            return;
+        }
+
+        String fileName = args[0];
+        String output = args[1];
+        //NormalizerTest p = new NormalizerTest();
+        ParserNormalizer p = new ParserNormalizer(fileName);
+        p.printDoubleLists(p.getDoubleAttributes(), output);
+        System.out.println();
+        System.out.println();
+        p.printStringList(p.getStringAttributes(), output);
+        /*
+        try {
+            p.readData(fileName);
+            p.processData();
+            p.
+        } catch (Exception ex) {
+
+        }
+        */
+    }
 }
