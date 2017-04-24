@@ -98,6 +98,9 @@ public class ParserNormalizer {
         }
 
         normalizeNumericData();
+
+        // call function to condense normalized numerical data
+
     }
 
 
@@ -192,6 +195,7 @@ public class ParserNormalizer {
         return attributeDescriptions;
     }
 
+    //should return a condensed, non-0 column list of tuples
     public List<double[]> getDoubleAttributes(){
         //return doubleAttributes();
         return numericNormAttributes;
