@@ -1,6 +1,8 @@
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -27,6 +29,9 @@ public class ParserNormalizer {
     private final double  	MAXIMUM_NUMBER  = 1000000.0;
     private final double  	MINIMUM_NUMBER  = 0.0;
     private boolean			debug = false;
+    private BufferedWriter  output;
+    private String[]        numericAttributeNames;
+
 
     public ParserNormalizer(String filePathName){
         this.csvFile = new File(filePathName);
@@ -98,18 +103,30 @@ public class ParserNormalizer {
         }
 
         normalizeNumericData();
-
-        // call function to condense normalized numerical data
-
+        extractNumericAttributeNames();
     }
 
+    private void extractNumericAttributeNames(){
+        int[] numAttributes = {4,5,6,7,8,9,10,11,15,19,20,21};
+        System.out.println(Arrays.toString(numAttributes));
+        int counter = 0;
+        String[] splitted = attributeDescriptions.split(",");
 
+        numericAttributeNames = new String[12];
+        for(int i = 0; i < splitted.length; i++){
+            if(Arrays.asList(numAttributes).contains(i)){
+                numericAttributeNames[counter] = splitted[i];
+                counter++;
+                System.out.println(numericAttributeNames[counter]);
+            }
+        }
+    }
 
     public void addToStringAttributes(int i, int j, String attribute){
         int count ;
 
         if(attribute == null || attribute.length() == 0){
-        //    stringAttributes.get(i)[j] = "DNE";
+            //    stringAttributes.get(i)[j] = "DNE";
             attribute = "DNE";
         }
         else{
@@ -153,32 +170,49 @@ public class ParserNormalizer {
         // normalize numeric data
         for (int i = 0; i < dataSize; i++) {
             double[] tmpDoubleArr = new double[tupleLength];
+            int k = 0;
             for (int j = 1; j < tupleLength; j++) {
                 if (debug)
                     System.out.println(doubleAttributes.get(i)[j]);
-                if (doubleAttributes.get(i)[j] != 0.0) {
-                    tmpDoubleArr[j] = formatDecimal((doubleAttributes.get(i)[j] - miniNumOfAttribs[j]) / (maxiNumOfAttribs[j] - miniNumOfAttribs[j]));
+                if (miniNumOfAttribs[j] != MAXIMUM_NUMBER) { // && doubleAttributes.get(i)[j] != 0.0) {
+                    //tmpDoubleArr[j] = formatDecimal((doubleAttributes.get(i)[j] - miniNumOfAttribs[j]) / (maxiNumOfAttribs[j] - miniNumOfAttribs[j]));
+                    tmpDoubleArr[k++] = (doubleAttributes.get(i)[j] - miniNumOfAttribs[j]) / (maxiNumOfAttribs[j] - miniNumOfAttribs[j]);
+
                     if (debug)
-                        System.out.println("i : " + i + " j : " + j + " val : " + doubleAttributes.get(i)[j] + " maxi : " + maxiNumOfAttribs[j] + " mini : "+ miniNumOfAttribs[j] + " nor : " + tmpDoubleArr[j]);
+                        System.out.println("i : " + i + " j : " + j + " val : " + doubleAttributes.get(i)[j] + " maxi : " + maxiNumOfAttribs[j] + " mini : "+ miniNumOfAttribs[j] + " nor : " + tmpDoubleArr[k-1]);
                 }
             }
-            numericNormAttributes.set(i, tmpDoubleArr);
+
+            double[] doubleArr = new double[k];
+            for (int l = 0; l < k; l++)
+                doubleArr[l] = tmpDoubleArr[l];
+
+            numericNormAttributes.set(i, doubleArr);
         }
 
     }
 
     public static double formatDecimal(double val) {
-        DecimalFormat numberFormat = new DecimalFormat("#.0000");
+        DecimalFormat numberFormat = new DecimalFormat("#.00");
         return Double.valueOf(numberFormat.format(val));
     }
 
-    public void printDoubleLists(List<double[]> list){
-        for(double[] x:list){
-            System.out.println(Arrays.toString(x));
+    public void printDoubleLists(List<double[]> list, String outputFile){
+        try {
+            output = new BufferedWriter(new FileWriter(outputFile));
+
+            for(double[] x:list){
+                output.write(Arrays.toString(x) + "\r\n");
+                System.out.println(Arrays.toString(x));
+            }
+
+            output.close();
+        } catch (IOException ex) {
+            System.out.print(ex.getMessage());
         }
     }
 
-    public void printStringList(List<HashMap> list){
+    public void printStringList(List<HashMap> list, String output){
         for (int i = 0; i < tupleLength; i++) {
             HashMap map = list.get(i);
             Set keys = map.keySet();
@@ -191,11 +225,6 @@ public class ParserNormalizer {
         }
     }
 
-    public String getAttributeDescriptions(){
-        return attributeDescriptions;
-    }
-
-    //should return a condensed, non-0 column list of tuples
     public List<double[]> getDoubleAttributes(){
         //return doubleAttributes();
         return numericNormAttributes;
@@ -209,10 +238,20 @@ public class ParserNormalizer {
     public List<String[]> getData(){
         return data;
     }
+
     public double[] getMaxiNumOfAttribs(){
         return maxiNumOfAttribs;
     }
+
     public double[] getMiniNumOfAttribs(){
         return miniNumOfAttribs;
+    }
+
+    public String getAttributeDescriptions(){
+        return attributeDescriptions;
+    }
+
+    public String[] getNumericAttributeNames(){
+        return numericAttributeNames;
     }
 }

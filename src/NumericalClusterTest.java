@@ -12,21 +12,19 @@ public class NumericalClusterTest {
         //now try to do with given 2 attributes
         int x=0, y=0, numOfClusters = 0;
 
+//        for(int i = 0; i < pokemon.getDoubleAttributes().size(); i++){
+//            System.out.println(Arrays.toString(pokemon.getDoubleAttributes().get(i)));
+//        }
+        String[] white = pokemon.getNumericAttributeNames();
+        for(String pink : white){
+            System.out.print(white.toString() + ", ");
+        }
         Scanner sc = new Scanner(System.in);
-        double[] goodExample = pokemon.getDoubleAttributes().get(304);
-        System.out.println(Arrays.toString(goodExample));
 
        // System.out.println("this is the example\n" + Arrays.toString(goodExample));
         String attributeList = pokemon.getAttributeDescriptions();
         String[] attributes = attributeList.split(",");
         int count = 0;
-
-        for(int i = 0; i < attributes.length; i++){
-            if(goodExample[i] > 0){
-                System.out.println(count++ + " : " + attributes[i] );
-
-            }
-        }
 
         System.out.println("Please input 2 numbers that you would like to see the correlation:\n");
         x = sc.nextInt();
@@ -40,6 +38,6 @@ public class NumericalClusterTest {
         dosAttributes.printClusters();
 
         CSVFileMaker file = new CSVFileMaker(dosAttributes.getClusters(),dosAttributes.getAttributeDescriptions(), x, y);
-       // dosAttributes.printClusters();
+        dosAttributes.printClusters();
     }
 }
