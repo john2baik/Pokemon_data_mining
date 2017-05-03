@@ -11,14 +11,20 @@ public class NumericalClusterTest {
 
         //now try to do with given 2 attributes
         int x=0, y=0, numOfClusters = 0;
-
+        List<String> attributeNames = pokemon.getNumericAttributeNames();
+        for(int i = 0; i < attributeNames.size(); i++){
+            System.out.print(i + ". " + attributeNames.get(i) + "  ");
+        }
+        System.out.println();
 //        for(int i = 0; i < pokemon.getDoubleAttributes().size(); i++){
 //            System.out.println(Arrays.toString(pokemon.getDoubleAttributes().get(i)));
 //        }
-        String[] white = pokemon.getNumericAttributeNames();
-        for(String pink : white){
-            System.out.print(white.toString() + ", ");
-        }
+//        String[] white = pokemon.getNumericAttributeNames();
+//        for(String pink : white){
+//            System.out.print(white.toString() + ", ");
+//        }
+
+
         Scanner sc = new Scanner(System.in);
 
        // System.out.println("this is the example\n" + Arrays.toString(goodExample));
@@ -37,7 +43,7 @@ public class NumericalClusterTest {
         NumericalCluster dosAttributes = new NumericalCluster(pokemon.getDoubleAttributes(), pokemon.getAttributeDescriptions(), pokemon.getMaxiNumOfAttribs(), pokemon.getMiniNumOfAttribs(), numOfClusters, x, y);
         dosAttributes.printClusters();
 
-        CSVFileMaker file = new CSVFileMaker(dosAttributes.getClusters(),dosAttributes.getAttributeDescriptions(), x, y);
+        CSVFileMaker file = new CSVFileMaker(dosAttributes.getClusters(),attributeNames, x, y);
         dosAttributes.printClusters();
     }
 }

@@ -12,21 +12,20 @@ public class CSVFileMaker {
     private String attributeDescriptions;
     private int attr1; //names for the 2 attributes chosen
     private int attr2;
+    private List<String> attributeNames;
 
-
-    public CSVFileMaker(List<List<double[]>> clusters, String attributeDescriptions, int attribute1, int attribute2) {
+    public CSVFileMaker(List<List<double[]>> clusters, List<String> attributeNames, int attribute1, int attribute2) {
         this.clusters = clusters;
-        this.attributeDescriptions = attributeDescriptions;
+        this.attributeNames = attributeNames;
         attr1 = attribute1;
         attr2 = attribute2;
         makeFile();
     }
 
     private void makeFile (){
-        String[] attributes = attributeDescriptions.split(",");
 
-        String firstAttr = attributes[attr1];
-        String secondAttr = attributes[attr2];
+        String firstAttr = attributeNames.get(attr1);
+        String secondAttr = attributeNames.get(attr2);
 
         String filename = firstAttr+secondAttr+".csv";
         File csv = new File(filename);
