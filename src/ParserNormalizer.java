@@ -23,12 +23,16 @@ public class ParserNormalizer {
     private List<double[]> 	doubleAttributes;
     private List<String[]> 	stringAttributes;
     private List<HashMap>	alphbeticAttributes;
+    private List<String>  	attrNames;
+    private List<String>  	numericAttributeNames;
+    private List<String>  	alphbeticAttrNames;
     private List<double[]>  numericNormAttributes;
+    private List<Double>	attributeTotal;
     private double[]		maxiNumOfAttribs;
     private double[]		miniNumOfAttribs;
     private final double  	MAXIMUM_NUMBER  = 1000000.0;
     private final double  	MINIMUM_NUMBER  = 0.0;
-    private boolean			debug = true;
+    private boolean			debug = false;
     private BufferedWriter  output;
 
     public ParserNormalizer(String filePathName){
@@ -38,14 +42,15 @@ public class ParserNormalizer {
 
     public void makeLists(){
         makeIntoList(csvFile);
-        seperateNumerical();
+        seperateNumeric();
     }
 
     public void makeIntoList(File inputFile){
         data = new ArrayList<>();
         try{
             Scanner sc = new Scanner(inputFile);
-            attributeDescriptions = sc.nextLine(); //skip header line
+            attributeDescriptions = sc.nextLine();
+            processAttributeNames(attributeDescriptions);
             while(sc.hasNextLine()){
                 String line = sc.nextLine();
                 String[] tuple = line.split(",");
@@ -59,15 +64,28 @@ public class ParserNormalizer {
         dataSize = data.size();
     }
 
-    private void seperateNumerical(){
+    private void processAttributeNames(String names) {
+        attrNames = new ArrayList<String>(dataSize);
+        String[] tuple = names.split(",");
+
+        for (int i = 0; i < tuple.length; i++) {
+            attrNames.add(tuple[i]);
+        }
+    }
+
+    private void seperateNumeric(){
         doubleAttributes = new ArrayList<>(dataSize);
         initializeDoubleList();
         stringAttributes = new ArrayList<>(dataSize);
         initializeStringList();
+        //attrNamesForDouble = new ArrayList<String>(dataSize);
+        alphbeticAttrNames = new ArrayList<String>(dataSize);
+        numericAttributeNames = new ArrayList<String>(dataSize);
         maxiNumOfAttribs 	= new double[tupleLength];
         miniNumOfAttribs 	= new double[tupleLength];
         alphbeticAttributes = new ArrayList<HashMap>(tupleLength);
         numericNormAttributes = new ArrayList<>(dataSize);
+        attributeTotal		= new ArrayList<Double>();
         initializeNumericNormList();
 
         //Initialize maxiNumOfAttribs & miniNumOfAttribs
@@ -81,13 +99,16 @@ public class ParserNormalizer {
         for(int i = 0; i < dataSize; i++){
             String[] tuple = data.get(i);
             double[] tmpDoubleArr = new double[tupleLength];
-            for(int j = 0; j < tupleLength; j++){
+            for(int j = 1; j < tupleLength; j++){
                 if (debug)
                     System.out.println(tuple[j]);
 
                 try{
                     double numericalAttribute = Double.parseDouble(tuple[j]);
-                    //double[] tmp = doubleAttributes..get(i);
+                    if (i == 0)
+                        numericAttributeNames.add(attrNames.get(j) );
+                    if (j == 4)
+                        attributeTotal.add(new Double(numericalAttribute));
                     tmpDoubleArr[j] = numericalAttribute;
                     if (numericalAttribute > maxiNumOfAttribs[j])
                         maxiNumOfAttribs[j] = numericalAttribute;
@@ -95,6 +116,8 @@ public class ParserNormalizer {
                         miniNumOfAttribs[j] = numericalAttribute;
                 } catch(NumberFormatException e){
                     addToStringAttributes(i, j, tuple[j]);
+                    if (i == 0)
+                        alphbeticAttrNames.add(attrNames.get(j));
                 }
             }
             doubleAttributes.set(i, tmpDoubleArr);
@@ -156,8 +179,7 @@ public class ParserNormalizer {
             for (int j = 1; j < tupleLength; j++) {
                 if (debug)
                     System.out.println(doubleAttributes.get(i)[j]);
-                if (miniNumOfAttribs[j] != MAXIMUM_NUMBER) { // && doubleAttributes.get(i)[j] != 0.0) {
-                    //tmpDoubleArr[j] = formatDecimal((doubleAttributes.get(i)[j] - miniNumOfAttribs[j]) / (maxiNumOfAttribs[j] - miniNumOfAttribs[j]));
+                if (miniNumOfAttribs[j] != MAXIMUM_NUMBER) {
                     tmpDoubleArr[k++] = (doubleAttributes.get(i)[j] - miniNumOfAttribs[j]) / (maxiNumOfAttribs[j] - miniNumOfAttribs[j]);
 
                     if (debug)
@@ -166,8 +188,9 @@ public class ParserNormalizer {
             }
 
             double[] doubleArr = new double[k];
-            for (int l = 0; l < k; l++)
+            for (int l = 0; l < k; l++) {
                 doubleArr[l] = tmpDoubleArr[l];
+            }
 
             numericNormAttributes.set(i, doubleArr);
         }
@@ -207,6 +230,10 @@ public class ParserNormalizer {
         }
     }
 
+    //public List<double[]> getTotal(){
+    //return total attribute values
+    //}
+
     public List<double[]> getDoubleAttributes(){
         //return doubleAttributes();
         return numericNormAttributes;
@@ -221,28 +248,27 @@ public class ParserNormalizer {
         return data;
     }
 
-    public static void main(String[] args) {
-        if (args.length != 2) {
-            System.out.println("Usage: NormalizerTest datasetName outputFile");
-            return;
-        }
+    public double[] getMaxiNumOfAttribs(){
+        return maxiNumOfAttribs;
+    }
 
-        String fileName = args[0];
-        String output = args[1];
-        //NormalizerTest p = new NormalizerTest();
-        ParserNormalizer p = new ParserNormalizer(fileName);
-        p.printDoubleLists(p.getDoubleAttributes(), output);
-        System.out.println();
-        System.out.println();
-        p.printStringList(p.getStringAttributes(), output);
-        /*
-        try {
-            p.readData(fileName);
-            p.processData();
-            p.
-        } catch (Exception ex) {
+    public double[] getMiniNumOfAttribs(){
+        return miniNumOfAttribs;
+    }
 
-        }
-        */
+    public String getAttributeDescriptions(){
+        return attributeDescriptions;
+    }
+
+    public List<String> getNumericAttributeNames(){
+        return numericAttributeNames;
+    }
+
+    public List<String> getAlphbeticAttrNames() {
+        return alphbeticAttrNames;
+    }
+
+    public List<Double> getTotal() {
+        return attributeTotal;
     }
 }
