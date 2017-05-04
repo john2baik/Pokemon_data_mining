@@ -16,18 +16,8 @@ public class NumericalClusterTest {
             System.out.print(i + ". " + attributeNames.get(i) + "  ");
         }
         System.out.println();
-//        for(int i = 0; i < pokemon.getDoubleAttributes().size(); i++){
-//            System.out.println(Arrays.toString(pokemon.getDoubleAttributes().get(i)));
-//        }
-//        String[] white = pokemon.getNumericAttributeNames();
-//        for(String pink : white){
-//            System.out.print(white.toString() + ", ");
-//        }
-
-
         Scanner sc = new Scanner(System.in);
 
-       // System.out.println("this is the example\n" + Arrays.toString(goodExample));
         String attributeList = pokemon.getAttributeDescriptions();
         String[] attributes = attributeList.split(",");
         int count = 0;

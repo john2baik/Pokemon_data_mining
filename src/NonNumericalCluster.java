@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by johnbaik on 4/23/17.
@@ -19,8 +20,6 @@ public class NonNumericalCluster {
         this.attributeNames = attributeNames;
         this.total = total;
         this.tuples = tuples;
-
-
         this.category = category;
 
         parseType(category);
@@ -30,30 +29,37 @@ public class NonNumericalCluster {
 
     //pass in the type index, make into list of one attribute
     private void parseType(int index){
+        type = new ArrayList<String>(721);
         for(int i = 0; i < tuples.size(); i++){
-            System.out.println(tuples.get(i)[index]);
-            type.set(i, tuples.get(i)[index]);
+         //   System.out.println(tuples.get(i+1)[index]);
+            type.add(i, tuples.get(i)[index]);
         }
     }
 
     private void mapTypeTotal(){
+        typeMap = new HashMap<String, Double>();
         for(int i = 0; i < type.size(); i++){
             String typeName = type.get(i);
             Double val = total.get(i);
-            if(typeMap.get(i) == null){
-                typeMap.put(typeName, val);
+            System.out.println("type: " + typeName + "  " + " total: " + val);
+            if(typeMap.containsKey(typeName)){
+                typeMap.put(typeName, typeMap.get(typeName) + val);
             }
             else{
-                Double sum = typeMap.get(type) + val;
-                typeMap.put(typeName, sum);
+                typeMap.put(typeName, val);
+                //  System.out.println("put " + typeName + " in the map. val is " + val);
+             //   System.out.println("updated " + typeName + " total to " + sum);
             }
         }
     }
 
     private void averageType(int index){
+        typesTotal = new HashMap<String, Double>();
         for(String type : typeMap.keySet()){
             int numOfType = typeCounts.get(index).get(type);
             Double totalSum = typeMap.get(type);
+
+            System.out.println("numOfType" + " : " + numOfType + "   totalSum = " + totalSum);
             Double average = totalSum/numOfType;
             typesTotal.put(type, average);
         }

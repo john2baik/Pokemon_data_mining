@@ -246,7 +246,7 @@ public class ParserNormalizer {
     }
     public List<String[]> getData(){
         return data;
-    }
+    }//csv file
 
     public double[] getMaxiNumOfAttribs(){
         return maxiNumOfAttribs;
